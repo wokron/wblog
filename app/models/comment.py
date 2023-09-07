@@ -16,7 +16,7 @@ class Comment(Base):
     create_time = Column(DateTime, nullable=False, default=datetime.now)
 
     article_id = Column(Integer, ForeignKey("article.id"))
-    member_id = Column(Integer, ForeignKey("member.id"))
+    member_id = Column(Integer, ForeignKey("member.id"), nullable=True)
 
     article = relationship("Article", back_populates="comments")
     member = relationship("Member", back_populates="comments")
