@@ -35,7 +35,7 @@ def create_member(db: Session, member: schemas.MemberCreate):
     hashed_password = member.password + "fake hash"  # todo: need hash
     try:
         db_member = models.Member(
-            **member.model_dump(), hashed_password=hashed_password
+            **member.model_dump(exclude=["password"]), hashed_password=hashed_password
         )
         db.add(db_member)
         db.commit()
@@ -47,12 +47,14 @@ def create_member(db: Session, member: schemas.MemberCreate):
     return db_member
 
 
-def update_member(db: Session, member_id: int, member: schemas.MemberModify):
+def update_member(db: Session, member_id: int, member: schemas.MemberUpdate):
     try:
-        db.query(models.Member).filter(models.Member.id == member_id).update(
-            member.model_dump(exclude_unset=True)
-        )
+        params = member.model_dump(exclude_unset=True, exclude=["password"])
+        params.update(
+            {"hashed_password": member.password + "fake hash"}
+        )  # todo: need hash
+        db.query(models.Member).filter(models.Member.id == member_id).update(params)
         db.commit()
-    except SQLAlchemyError:
+    except SQLAlchemyError as e:
         return False
     return True
