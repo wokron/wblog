@@ -1,24 +1,25 @@
-from pydantic import BaseModel
+from pydantic import BaseModel, Field
 from ..models.member import Role
 
 
-class MemberBase(BaseModel):
-    name: str
+class Member(BaseModel):
+    id: int = Field(gt=0)
+    name: str = Field(min_length=1, max_length=20)
     role: Role
-
-
-class Member(MemberBase):
-    id: int
     is_active: bool
 
     class Config:
         orm_mode = True
 
 
-class MemberCreate(MemberBase):
-    password: str
+class MemberCreate(BaseModel):
+    name: str = Field(min_length=1, max_length=20)
+    role: Role = Role.MEMBER
+    password: str = Field(min_length=8, max_length=24, pattern="^[0-9a-zA-Z]+$")
 
 
-class MemberModify(MemberBase):
-    password: str
-    is_active: bool
+class MemberModify(BaseModel):
+    name: str = Field(None, min_length=1, max_length=20)
+    role: Role = None
+    password: str = Field(None, min_length=8, max_length=24, pattern="^[0-9a-zA-Z]+$")
+    is_active: bool = None
