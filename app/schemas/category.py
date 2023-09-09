@@ -1,12 +1,12 @@
-from pydantic import BaseModel
+from pydantic import BaseModel, Field
 
 
 class CategoryBase(BaseModel):
-    name: str
+    name: str = Field(min_length=1, max_length=20)
 
 
 class Category(CategoryBase):
-    id: int
+    id: int = Field(gt=0)
 
     class Config:
         orm_mode = True
