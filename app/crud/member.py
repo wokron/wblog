@@ -23,7 +23,7 @@ def list_members(
 ):
     params = []
     if name_like:
-        params.append(models.Member.name.like(name_like))
+        params.append(models.Member.name.like(f"%{name_like}%"))
     if role:
         params.append(models.Member.role == role)
     if is_active:
