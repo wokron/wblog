@@ -26,7 +26,7 @@ def list_categorys(db: Session, hide_unused: bool = False):
 
 def create_category(db: Session, category: schemas.CategoryCreate):
     try:
-        db_category = models.Category(**category)
+        db_category = models.Category(**category.model_dump())
         db.add(db_category)
         db.commit()
     except SQLAlchemyError as e:
