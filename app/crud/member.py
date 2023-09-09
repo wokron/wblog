@@ -56,5 +56,6 @@ def update_member(db: Session, member_id: int, member: schemas.MemberUpdate):
         db.query(models.Member).filter(models.Member.id == member_id).update(params)
         db.commit()
     except SQLAlchemyError as e:
+        db.rollback()
         return False
     return True

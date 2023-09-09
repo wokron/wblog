@@ -39,6 +39,7 @@ def create_category(db: Session, category: schemas.CategoryCreate):
 def delete_category(db: Session, category_id: int):
     try:
         db.query(models.Category).filter(models.Category.id == category_id).delete()
+        db.commit()
     except SQLAlchemyError as e:
         db.rollback()
         return False
@@ -49,6 +50,7 @@ def set_article_category(db: Session, category_id: int, article_id: int):
         db.query(models.Article).filter(models.Article.id == article_id).update(
             {"category_id": category_id}
         )
+        db.commit()
     except SQLAlchemyError as e:
         db.rollback()
         return False
