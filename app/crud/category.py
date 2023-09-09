@@ -15,7 +15,7 @@ def get_category_by_name(db: Session, category_name: str):
     )
 
 
-def list_categorys(db: Session, hide_unused: bool = False):
+def list_categories(db: Session, hide_unused: bool = False):
     params = []
     if hide_unused:
         category_ids = db.query(models.Article.category_id)

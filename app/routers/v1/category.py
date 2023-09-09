@@ -11,8 +11,8 @@ router = APIRouter(
 
 
 @router.get("/", response_model=list[schemas.Category])
-async def list_categorys(hide_unused: bool = False, db: Session = Depends(get_db)):
-    categorys = crud.list_categorys(db, hide_unused)
+async def list_categories(hide_unused: bool = False, db: Session = Depends(get_db)):
+    categorys = crud.list_categories(db, hide_unused)
     return categorys
 
 
