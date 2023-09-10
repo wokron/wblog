@@ -1,29 +1,29 @@
 from datetime import datetime
-from pydantic import BaseModel
+from pydantic import BaseModel, Field
 from . import tag, comment, category
 
 
-class ArticleBase(BaseModel):
-    title: str
-    content: str
-
-
-class Article(ArticleBase):
-    id: int
+class Article(BaseModel):
+    id: int = Field(gt=0)
+    title: str = Field(min_length=1, max_length=50)
+    content: str = ""
     create_time: datetime
     update_time: datetime
-    is_deleted: bool
-    comments: list[comment.Comment]
-    category: category.Category
-    tags: list[tag.Tag]
+    is_deleted: bool = False
+    comments: list[comment.Comment] = []
+    category: category.Category = None
+    tags: list[tag.Tag] = []
 
     class Config:
         orm_mode = True
 
 
-class ArticleCreate(ArticleBase):
-    pass
+class ArticleCreate(BaseModel):
+    title: str = Field(min_length=1, max_length=50)
+    content: str = ""
 
 
-class ArticleModify(ArticleBase):
-    is_deleted: bool
+class ArticleUpdate(BaseModel):
+    title: str = Field(None, min_length=1, max_length=50)
+    content: str = None
+    is_deleted: bool = None
