@@ -31,6 +31,8 @@ def list_articles(
     update_time_before: datetime = None,
     is_deleted: bool = None,
     order_by: str = "-create_time",
+    skip: int = 0,
+    limit: int = 10,
 ):
     params = []
     if title_like is not None:
@@ -66,7 +68,7 @@ def list_articles(
     if is_deleted is not None:
         params.append(models.Article.is_deleted == is_deleted)
 
-    query = db.query(models.Article).filter(*params)
+    query = db.query(models.Article).filter(*params).offset(skip).limit(limit)
 
     if order_by is not None:
         if order_by.startswith("-"):

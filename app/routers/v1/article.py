@@ -26,6 +26,8 @@ async def list_articles(
     order_by: str = Query(
         "-create_time", pattern="^-?(create_time|update_time|title)$"
     ),
+    skip: int = Query(0, ge=0),
+    limit: int = Query(10, gt=0),
     db: Session = Depends(get_db),
 ):
     articles = crud.list_articles(
@@ -41,6 +43,8 @@ async def list_articles(
         update_time_before,
         is_deleted,
         order_by,
+        skip,
+        limit,
     )
     return articles
 

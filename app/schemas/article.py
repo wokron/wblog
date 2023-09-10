@@ -25,7 +25,6 @@ class ArticleSimplify(BaseModel):
     create_time: datetime
     update_time: datetime
     is_deleted: bool = False
-    comments: list[comment.Comment] = []
     category: Category | None = None
     tags: list[tag.Tag] = []
 
