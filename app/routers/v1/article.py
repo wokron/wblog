@@ -89,3 +89,45 @@ async def update_article(
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST, detail="fail to update article"
         )
+
+
+@router.post("/{article_id}/category/{category_id}")
+async def set_article_category(
+    article_id: int = Path(gt=0),
+    category_id: int = Path(gt=0),
+    db: Session = Depends(get_db),
+):
+    success = crud.set_article_category(db, article_id, category_id)
+    if not success:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="fail to set article category",
+        )
+
+
+@router.post("/{article_id}/tag/{tag_id}")
+async def add_article_tag(
+    article_id: int = Path(gt=0),
+    tag_id: int = Path(gt=0),
+    db: Session = Depends(get_db),
+):
+    success = crud.add_article_tag(db, article_id, tag_id)
+    if not success:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="fail to add article tag",
+        )
+
+
+@router.delete("/{article_id}/tag/{tag_id}")
+async def remove_article_tag(
+    article_id: int = Path(gt=0),
+    tag_id: int = Path(gt=0),
+    db: Session = Depends(get_db),
+):
+    success = crud.remove_article_tag(db, article_id, tag_id)
+    if not success:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="fail to remove article tag",
+        )

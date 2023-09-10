@@ -45,13 +45,3 @@ def delete_category(db: Session, category_id: int):
         return False
     return True
 
-def set_article_category(db: Session, category_id: int, article_id: int):
-    try:
-        db.query(models.Article).filter(models.Article.id == article_id).update(
-            {"category_id": category_id}
-        )
-        db.commit()
-    except SQLAlchemyError as e:
-        db.rollback()
-        return False
-    return True

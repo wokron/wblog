@@ -5,6 +5,7 @@ from sqlalchemy.exc import SQLAlchemyError
 
 from .. import models
 from .. import schemas
+from . import get_tag
 
 
 def get_article(db: Session, article_id: int):
@@ -104,6 +105,48 @@ def update_article(db: Session, article_id: int, article: schemas.ArticleUpdate)
         db.query(models.Article).filter(models.Article.id == article_id).update(
             article.model_dump(exclude_unset=True)
         )
+        db.commit()
+    except SQLAlchemyError as e:
+        db.rollback()
+        return False
+    return True
+
+
+def set_article_category(db: Session, article_id: int, category_id: int):
+    try:
+        db.query(models.Article).filter(models.Article.id == article_id).update(
+            {"category_id": category_id}
+        )
+        db.commit()
+    except SQLAlchemyError as e:
+        db.rollback()
+        return False
+    return True
+
+
+def add_article_tag(db: Session, article_id: int, tag_id: int):
+    article: models.Article = get_article(db, article_id)
+    tag: models.Tag = get_tag(db, tag_id)
+    if article is None or tag is None:
+        return True
+
+    try:
+        article.tags.append(tag)
+        db.commit()
+    except SQLAlchemyError as e:
+        db.rollback()
+        return False
+    return True
+
+
+def remove_article_tag(db: Session, article_id: int, tag_id: int):
+    article: models.Article = get_article(db, article_id)
+    tag: models.Tag = get_tag(db, tag_id)
+    if article is None or tag is None:
+        return True
+
+    try:
+        article.tags.remove(tag)
         db.commit()
     except SQLAlchemyError as e:
         db.rollback()

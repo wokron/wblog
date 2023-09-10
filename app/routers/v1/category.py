@@ -50,17 +50,3 @@ async def delete_category(category_id: int = Path(gt=0), db: Session = Depends(g
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST, detail="fail to delete category"
         )
-
-
-@router.post("/{category_id}/article")
-async def set_article_category(
-    category_id: int = Path(gt=0),
-    article_id: int = Body(gt=0, embed=True),
-    db: Session = Depends(get_db),
-):
-    success = crud.set_article_category(db, category_id, article_id)
-    if not success:
-        raise HTTPException(
-            status_code=status.HTTP_400_BAD_REQUEST,
-            detail="fail to set article category",
-        )
