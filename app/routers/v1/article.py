@@ -135,3 +135,29 @@ async def remove_article_tag(
             status_code=status.HTTP_400_BAD_REQUEST,
             detail="fail to remove article tag",
         )
+
+
+@router.get("/{article_id}/comment", response_model=list[schemas.Comment])
+async def list_article_comments(
+    article_id: int = Path(gt=0),
+    order_by: str = Query("-create_time", pattern="^-?(create_time|like|dislike)$"),
+    skip: int = Query(0, ge=0),
+    limit: int = Query(10, gt=0),
+    db: Session = Depends(get_db),
+):
+    comments = crud.list_comments(db, article_id, order_by, skip, limit)
+    return comments
+
+
+@router.post("/{article_id}/comment", response_model=schemas.Comment)
+async def create_article_comment(
+    comment: schemas.CommentCreate,
+    article_id: int = Path(gt=0),
+    db: Session = Depends(get_db),
+):
+    result_comment = crud.create_comment(db, article_id, comment)
+    if result_comment is None:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST, detail="fail to create comment"
+        )
+    return result_comment

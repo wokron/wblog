@@ -23,14 +23,14 @@ def list_comments(
     if article is None:
         return []
 
-    query = article.comments.offset(skip).limit(limit)
+    query = db.query(models.Comment).filter(models.Comment.article_id == article_id)
     if order_by is not None:
         if order_by.startswith("-"):
             order_by = order_by[1:]
             query = query.order_by(desc(order_by))
         else:
             query = query.order_by(order_by)
-    return query.all()
+    return query.offset(skip).limit(limit).all()
 
 
 def create_comment(db: Session, article_id: int, comment: schemas.CommentCreate):
