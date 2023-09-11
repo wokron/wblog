@@ -95,7 +95,7 @@ async def update_article(
         )
 
 
-@router.post("/{article_id}/category/{category_id}")
+@router.post("/{article_id}/category/{category_id}", tags=["category"])
 async def set_article_category(
     article_id: int = Path(gt=0),
     category_id: int = Path(gt=0),
@@ -109,7 +109,7 @@ async def set_article_category(
         )
 
 
-@router.post("/{article_id}/tag/{tag_id}")
+@router.post("/{article_id}/tag/{tag_id}", tags=["tag"])
 async def add_article_tag(
     article_id: int = Path(gt=0),
     tag_id: int = Path(gt=0),
@@ -123,7 +123,7 @@ async def add_article_tag(
         )
 
 
-@router.delete("/{article_id}/tag/{tag_id}")
+@router.delete("/{article_id}/tag/{tag_id}", tags=["tag"])
 async def remove_article_tag(
     article_id: int = Path(gt=0),
     tag_id: int = Path(gt=0),
@@ -137,7 +137,9 @@ async def remove_article_tag(
         )
 
 
-@router.get("/{article_id}/comment", response_model=list[schemas.Comment])
+@router.get(
+    "/{article_id}/comment", response_model=list[schemas.Comment], tags=["comment"]
+)
 async def list_article_comments(
     article_id: int = Path(gt=0),
     order_by: str = Query("-create_time", pattern="^-?(create_time|like|dislike)$"),
@@ -149,7 +151,7 @@ async def list_article_comments(
     return comments
 
 
-@router.post("/{article_id}/comment", response_model=schemas.Comment)
+@router.post("/{article_id}/comment", response_model=schemas.Comment, tags=["comment"])
 async def create_article_comment(
     comment: schemas.CommentCreate,
     article_id: int = Path(gt=0),
