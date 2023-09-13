@@ -1,13 +1,10 @@
 from fastapi import APIRouter
-from .v1 import member, category, tag, article, comment
+from .v1 import v1
+from . import token
 
-apiv1 = APIRouter(
-    prefix="/api/v1",
-    tags=["v1"],
+api = APIRouter(
+    prefix="/api",
 )
 
-apiv1.include_router(member.router)
-apiv1.include_router(category.router)
-apiv1.include_router(tag.router)
-apiv1.include_router(article.router)
-apiv1.include_router(comment.router)
+api.include_router(v1.router)
+api.include_router(token.router)
