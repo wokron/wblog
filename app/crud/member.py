@@ -1,5 +1,6 @@
 from sqlalchemy.orm import Session
 from sqlalchemy.exc import SQLAlchemyError
+from utils import verify_password, get_password_hash
 
 from .. import models
 from .. import schemas
@@ -11,6 +12,15 @@ def get_member(db: Session, member_id: int):
 
 def get_member_by_name(db: Session, member_name: str):
     return db.query(models.Member).filter(models.Member.name == member_name).first()
+
+
+def authenticate_member(db: Session, member_name: str, password: str):
+    member: models.Member = get_member_by_name(member_name)
+    if member is None:
+        return False
+    if not verify_password(password, member.hashed_password):
+        return False
+    return member
 
 
 def list_members(
@@ -32,7 +42,7 @@ def list_members(
 
 
 def create_member(db: Session, member: schemas.MemberCreate):
-    hashed_password = member.password + "fake hash"  # todo: need hash
+    hashed_password = get_password_hash(member.password)
     try:
         db_member = models.Member(
             **member.model_dump(exclude=["password"]), hashed_password=hashed_password
@@ -51,8 +61,8 @@ def update_member(db: Session, member_id: int, member: schemas.MemberUpdate):
     try:
         params = member.model_dump(exclude_unset=True, exclude=["password"])
         params.update(
-            {"hashed_password": member.password + "fake hash"}
-        )  # todo: need hash
+            {"hashed_password": get_password_hash(member.password)}
+        )
         db.query(models.Member).filter(models.Member.id == member_id).update(params)
         db.commit()
     except SQLAlchemyError as e:
