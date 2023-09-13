@@ -9,13 +9,13 @@ from ..dependencies.config import get_settings
 from ..config import Settings
 from ..utils import create_token
 
-router = APIRouter(
+auth = APIRouter(
     prefix="/token",
     tags=["token"],
 )
 
 
-@router.post("/", response_model=schemas.Token)
+@auth.post("/", response_model=schemas.Token)
 async def login_for_access_token(
     form_data: OAuth2PasswordRequestForm = Depends(),
     db: Session = Depends(get_db),
@@ -29,7 +29,7 @@ async def login_for_access_token(
             headers={"WWW-Authenticate": "Bearer"},
         )
     access_token_expires = timedelta(minutes=setting.access_token_expire_minutes)
-    access_token = create_token(        data={"sub": member.name}, expires_delta=access_token_expires
-
+    access_token = create_token(
+        data={"sub": member.name}, expires_delta=access_token_expires
     )
     return schemas.Token(access_token=access_token, token_type="bearer")

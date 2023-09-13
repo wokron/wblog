@@ -7,4 +7,3 @@ api = APIRouter(
 )
 
 api.include_router(v1.router)
-api.include_router(token.router)

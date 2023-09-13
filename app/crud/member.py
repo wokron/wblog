@@ -1,6 +1,6 @@
 from sqlalchemy.orm import Session
 from sqlalchemy.exc import SQLAlchemyError
-from utils import verify_password, get_password_hash
+from ..utils import verify_password, get_password_hash
 
 from .. import models
 from .. import schemas
@@ -15,11 +15,11 @@ def get_member_by_name(db: Session, member_name: str):
 
 
 def authenticate_member(db: Session, member_name: str, password: str):
-    member: models.Member = get_member_by_name(member_name)
+    member: models.Member = get_member_by_name(db, member_name)
     if member is None:
-        return False
+        return None
     if not verify_password(password, member.hashed_password):
-        return False
+        return None
     return member
 
 
