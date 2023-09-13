@@ -41,11 +41,3 @@ def delete_tag(db: Session, tag_id: int):
         db.rollback()
         return False
     return True
-
-
-def add_article_tag(db: Session, tag_id: int, article_id: int):
-    pass  # todo: need to implement
-
-
-def remove_article_tag(db: Session, tag_id: int, article_id: int):
-    pass  # todo: need to implement
