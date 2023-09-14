@@ -1,5 +1,5 @@
 from datetime import datetime, timedelta
-from . import jwt
+from .jwt import jwt_encode
 
 
 def create_token(data: dict, expires_delta: timedelta = None):
@@ -9,4 +9,4 @@ def create_token(data: dict, expires_delta: timedelta = None):
     else:
         expire = datetime.utcnow() + timedelta(minutes=30)
     to_encode.update({"exp": expire})
-    return jwt.jwt_encode(to_encode)
+    return jwt_encode(to_encode)

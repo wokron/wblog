@@ -1,12 +1,14 @@
 import enum
-from sqlalchemy import Boolean, Column, Integer, String, Enum
+from sqlalchemy import Boolean, Column, Integer, String, Enum, event
 from sqlalchemy.orm import relationship
+from ..dependencies import config
+from ..utils import get_password_hash
 
 from ..core.database import Base
 
 
 class Role(enum.Enum):
-    CREATER = "Creator"
+    OWNER = "Owner"
     MANAGER = "Manager"
     MEMBER = "Common Member"
 
@@ -24,3 +26,18 @@ class Member(Base):
         "Article", secondary="article2member", back_populates="writers"
     )
     comments = relationship("Comment", back_populates="member")
+
+
+def create_owner_data(target, connection, **kw):
+    settings = config.get_settings()
+    connection.execute(
+        target.insert(),
+        {
+            "name": settings.owner_name,
+            "hashed_password": get_password_hash(settings.owner_password),
+            "role": Role.OWNER,
+        },
+    )
+
+
+event.listen(Member.__table__, "after_create", create_owner_data)
