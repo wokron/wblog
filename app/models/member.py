@@ -22,9 +22,7 @@ class Member(Base):
     role = Column(Enum(Role), nullable=False, default=Role.MEMBER)
     is_active = Column(Boolean, nullable=False, default=True)
 
-    articles = relationship(
-        "Article", secondary="article2member", back_populates="writers"
-    )
+    articles = relationship("Article", back_populates="writer")
     comments = relationship("Comment", back_populates="member")
 
 
