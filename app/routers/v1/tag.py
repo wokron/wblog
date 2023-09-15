@@ -3,6 +3,7 @@ from fastapi import APIRouter, Depends, Path, HTTPException, status, Body
 from sqlalchemy.orm import Session
 from ... import crud, schemas
 from ...dependencies.database import get_db
+from ...dependencies.member import get_current_active_member
 
 router = APIRouter(
     prefix="/tag",
@@ -26,7 +27,11 @@ async def get_tag(tag_id: int = Path(gt=0), db: Session = Depends(get_db)):
     return result_tag
 
 
-@router.post("/", response_model=schemas.Tag)
+@router.post(
+    "/",
+    response_model=schemas.Tag,
+    dependencies=[Depends(get_current_active_member)],
+)
 async def create_tag(tag: schemas.TagCreate, db: Session = Depends(get_db)):
     if crud.get_tag_by_name(db, tag.name) is not None:
         raise HTTPException(
@@ -40,7 +45,7 @@ async def create_tag(tag: schemas.TagCreate, db: Session = Depends(get_db)):
     return tag_created
 
 
-@router.delete("/{tag_id}")
+@router.delete("/{tag_id}", dependencies=[Depends(get_current_active_member)])
 async def delete_tag(tag_id: int = Path(gt=0), db: Session = Depends(get_db)):
     success = crud.delete_tag(db, tag_id)
     if not success:

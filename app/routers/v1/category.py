@@ -3,6 +3,7 @@ from fastapi import APIRouter, Depends, Path, HTTPException, status, Body
 from sqlalchemy.orm import Session
 from ... import crud, schemas
 from ...dependencies.database import get_db
+from ...dependencies.member import get_current_active_member
 
 router = APIRouter(
     prefix="/category",
@@ -26,7 +27,11 @@ async def get_category(category_id: int = Path(gt=0), db: Session = Depends(get_
     return result_category
 
 
-@router.post("/", response_model=schemas.Category)
+@router.post(
+    "/",
+    response_model=schemas.Category,
+    dependencies=[Depends(get_current_active_member)],
+)
 async def create_category(
     category: schemas.CategoryCreate, db: Session = Depends(get_db)
 ):
@@ -43,7 +48,7 @@ async def create_category(
     return category_created
 
 
-@router.delete("/{category_id}")
+@router.delete("/{category_id}", dependencies=[Depends(get_current_active_member)])
 async def delete_category(category_id: int = Path(gt=0), db: Session = Depends(get_db)):
     success = crud.delete_category(db, category_id)
     if not success:

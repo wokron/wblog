@@ -2,8 +2,9 @@ from datetime import datetime
 from fastapi import APIRouter, Depends, Path, HTTPException, Query, status, Body
 
 from sqlalchemy.orm import Session
-from ... import crud, schemas
+from ... import crud, schemas, models
 from ...dependencies.database import get_db
+from ...dependencies.member import get_current_active_member
 
 router = APIRouter(
     prefix="/comment",
@@ -22,7 +23,19 @@ def get_comment(comment_id: int = Path(gt=0), db: Session = Depends(get_db)):
 
 
 @router.delete("/{comment_id}")
-def delete_comment(comment_id: int = Path(gt=0), db: Session = Depends(get_db)):
+def delete_comment(
+    comment_id: int = Path(gt=0),
+    db: Session = Depends(get_db),
+    current_member: models.Member = Depends(get_current_active_member),
+):
+    comment = crud.get_comment(db, comment_id)
+    if comment is None:
+        return
+    if comment.article.writer_id != current_member.id:
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail="no permission to delete comment",
+        )
     success = crud.delete_comment(db, comment_id)
     if not success:
         raise HTTPException(
@@ -35,7 +48,19 @@ def update_comment(
     comment: schemas.CommentUpdate,
     comment_id: int = Path(gt=0),
     db: Session = Depends(get_db),
+    current_member: models.Member = Depends(get_current_active_member),
 ):
+    comment_to_update = crud.get_comment(db, comment_id)
+    if comment is None:
+        return
+    if (
+        comment_to_update.member_id == None
+        or comment_to_update.member_id != current_member.id
+    ):
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail="no premission to update comment",
+        )
     success = crud.update_comment(db, comment_id, comment)
     if not success:
         raise HTTPException(
