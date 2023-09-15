@@ -2,8 +2,9 @@ from datetime import datetime
 from fastapi import APIRouter, Depends, Path, HTTPException, Query, status, Body
 
 from sqlalchemy.orm import Session
-from ... import crud, schemas
+from ... import crud, schemas, models
 from ...dependencies.database import get_db
+from ...dependencies.member import get_current_active_member
 
 router = APIRouter(
     prefix="/article",
@@ -60,12 +61,16 @@ async def get_article(article_id: int = Path(gt=0), db: Session = Depends(get_db
 
 
 @router.post("/", response_model=schemas.ArticleSimplify)
-async def create_article(article: schemas.ArticleCreate, db: Session = Depends(get_db)):
+async def create_article(
+    article: schemas.ArticleCreate,
+    db: Session = Depends(get_db),
+    current_member: models.Member = Depends(get_current_active_member),
+):
     if crud.get_article_by_title(db, article.title) is not None:
         raise HTTPException(
             status_code=status.HTTP_409_CONFLICT, detail="article title already exist"
         )
-    article_created = crud.create_article(db, 1, article) # todo: writer_id
+    article_created = crud.create_article(db, current_member.id, article)
     if article_created is None:
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST, detail="fail to create article"
@@ -74,7 +79,31 @@ async def create_article(article: schemas.ArticleCreate, db: Session = Depends(g
 
 
 @router.delete("/{article_id}")
-async def delete_article(article_id: int = Path(gt=0), db: Session = Depends(get_db)):
+async def delete_article(
+    article_id: int = Path(gt=0),
+    db: Session = Depends(get_db),
+    current_member: models.Member = Depends(get_current_active_member),
+):
+    article: models.Article = crud.get_article(db, article_id)
+    if article is None:
+        return  # no article to delete, so just return
+    if not article.is_deleted:
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail="cannot delete article when is_delete=false",
+        )
+    if not (
+        current_member.role == models.Role.OWNER
+        or (
+            current_member.role == models.Role.MANAGER
+            and article.writer.role == models.Role.MEMBER
+        )
+    ):
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail="no permission to delete article",
+        )
+
     success = crud.delete_article(db, article_id)
     if not success:
         raise HTTPException(
@@ -87,7 +116,31 @@ async def update_article(
     article: schemas.ArticleUpdate,
     article_id: int = Path(gt=0),
     db: Session = Depends(get_db),
+    current_member: models.Member = Depends(get_current_active_member),
 ):
+    article_to_update: models.Article = crud.get_article(db, article_id)
+    if article_to_update is None:
+        return
+    if article.is_deleted is not None:
+        # when is_deleted is set, title and content will not update
+        article.title = None
+        article.content = None
+        if (
+            current_member.id != article_to_update.writer_id
+            and (
+                article_to_update.writer.role == models.Role.OWNER
+                or current_member.role == models.Role.MEMBER
+                or (
+                    article_to_update.writer.role == models.Role.MANAGER
+                    and current_member.role == models.Role.MANAGER
+                )
+            )
+        ):
+            raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="no premission to set is_deleted in article")
+    else:
+        if current_member.id != article_to_update.writer_id:
+            raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="no premission to update article")
+
     success = crud.update_article(db, article_id, article)
     if not success:
         raise HTTPException(
@@ -100,7 +153,12 @@ async def set_article_category(
     article_id: int = Path(gt=0),
     category_id: int = Path(gt=0),
     db: Session = Depends(get_db),
+    current_member: models.Member = Depends(get_current_active_member),
 ):
+    article: models.Article = crud.get_article(db, article_id)
+    if current_member.id != article.writer_id:
+        raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="no premission to set article's category")
+    
     success = crud.set_article_category(db, article_id, category_id)
     if not success:
         raise HTTPException(
@@ -114,7 +172,12 @@ async def add_article_tag(
     article_id: int = Path(gt=0),
     tag_id: int = Path(gt=0),
     db: Session = Depends(get_db),
+    current_member: models.Member = Depends(get_current_active_member),
 ):
+    article: models.Article = crud.get_article(db, article_id)
+    if current_member.id != article.writer_id:
+        raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="no premission to add tag to article")
+
     success = crud.add_article_tag(db, article_id, tag_id)
     if not success:
         raise HTTPException(
@@ -128,7 +191,12 @@ async def remove_article_tag(
     article_id: int = Path(gt=0),
     tag_id: int = Path(gt=0),
     db: Session = Depends(get_db),
+    current_member: models.Member = Depends(get_current_active_member),
 ):
+    article: models.Article = crud.get_article(db, article_id)
+    if current_member.id != article.writer_id:
+        raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="no premission to remove tags of article")
+
     success = crud.remove_article_tag(db, article_id, tag_id)
     if not success:
         raise HTTPException(
