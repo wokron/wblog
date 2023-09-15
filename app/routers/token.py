@@ -9,13 +9,13 @@ from ..dependencies.config import get_settings
 from ..config import Settings
 from ..utils import create_token
 
-auth = APIRouter(
+router = APIRouter(
     prefix="/token",
     tags=["token"],
 )
 
 
-@auth.post("/", response_model=schemas.Token)
+@router.post("/", response_model=schemas.Token)
 async def login_for_access_token(
     form_data: OAuth2PasswordRequestForm = Depends(),
     db: Session = Depends(get_db),

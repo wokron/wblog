@@ -1,9 +1,7 @@
 from fastapi import APIRouter
-from .v1 import v1
-from . import token
+from . import api, token
 
-api = APIRouter(
-    prefix="/api",
-)
+router = APIRouter()
 
-api.include_router(v1.router)
+router.include_router(api.router)
+router.include_router(token.router)
