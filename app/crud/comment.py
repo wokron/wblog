@@ -33,9 +33,9 @@ def list_comments(
     return query.offset(skip).limit(limit).all()
 
 
-def create_comment(db: Session, article_id: int, comment: schemas.CommentCreate):
+def create_comment(db: Session, article_id: int, member_id: int, comment: schemas.CommentCreate):
     try:
-        db_comment = models.Comment(**comment.model_dump(), article_id=article_id)
+        db_comment = models.Comment(**comment.model_dump(), article_id=article_id, member_id=member_id)
         db.add(db_comment)
         db.commit()
     except SQLAlchemyError as e:

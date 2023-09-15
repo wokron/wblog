@@ -224,8 +224,23 @@ async def create_article_comment(
     comment: schemas.CommentCreate,
     article_id: int = Path(gt=0),
     db: Session = Depends(get_db),
+    current_member: models.Member = Depends(get_current_active_member),
 ):
-    result_comment = crud.create_comment(db, article_id, comment)
+    result_comment = crud.create_comment(db, article_id, current_member.id, comment)
+    if result_comment is None:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST, detail="fail to create comment"
+        )
+    return result_comment
+
+
+@router.post("/{article_id}/comment/visitor", response_model=schemas.Comment, tags=["comment"])
+async def create_article_comment(
+    comment: schemas.CommentCreate,
+    article_id: int = Path(gt=0),
+    db: Session = Depends(get_db),
+):
+    result_comment = crud.create_comment(db, article_id, None, comment)
     if result_comment is None:
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST, detail="fail to create comment"
