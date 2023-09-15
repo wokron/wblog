@@ -3,6 +3,10 @@ from pydantic import BaseModel, Field
 from . import tag, comment
 from .category import Category
 
+class WriterInfo(BaseModel):
+    id: int = Field(gt=0)
+    name: str = Field(min_length=1, max_length=20)
+
 
 class Article(BaseModel):
     id: int = Field(gt=0)
@@ -13,6 +17,7 @@ class Article(BaseModel):
     is_deleted: bool = False
     category: Category | None = None
     tags: list[tag.Tag] = []
+    writer: WriterInfo
 
     class Config:
         orm_mode = True
@@ -26,6 +31,7 @@ class ArticleSimplify(BaseModel):
     is_deleted: bool = False
     category: Category | None = None
     tags: list[tag.Tag] = []
+    writer: WriterInfo
 
     class Config:
         orm_mode = True

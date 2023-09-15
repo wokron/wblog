@@ -17,7 +17,7 @@ async def list_articles(
     content_has: str = None,
     category_id: int = Query(None, gt=0),
     tag_ids: list[int] = Query(None),
-    writer_ids: list[int] = Query(None),
+    writer_id: int = Query(None, gt=0),
     create_time_after: datetime = None,
     create_time_before: datetime = None,
     update_time_after: datetime = None,
@@ -36,7 +36,7 @@ async def list_articles(
         content_has,
         category_id,
         tag_ids,
-        writer_ids,
+        writer_id,
         create_time_after,
         create_time_before,
         update_time_after,
@@ -65,7 +65,7 @@ async def create_article(article: schemas.ArticleCreate, db: Session = Depends(g
         raise HTTPException(
             status_code=status.HTTP_409_CONFLICT, detail="article title already exist"
         )
-    article_created = crud.create_article(db, article)
+    article_created = crud.create_article(db, 1, article) # todo: writer_id
     if article_created is None:
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST, detail="fail to create article"

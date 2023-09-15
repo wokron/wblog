@@ -24,7 +24,7 @@ def list_articles(
     content_has: str = None,
     category_id: int = None,
     tag_ids: list[int] = None,
-    writer_ids: list[int] = None,
+    writer_id: int = None,
     create_time_after: datetime = None,
     create_time_before: datetime = None,
     update_time_after: datetime = None,
@@ -49,14 +49,8 @@ def list_articles(
             .having(func.count(models.article2tag.c.tag_id) == len(tag_ids))
         )
         params.append(models.Article.id.in_(article_ids_with_all_tags))
-    if writer_ids is not None:
-        article_ids_with_all_writers = (
-            db.query(models.article2member.c.article_id)
-            .filter(models.article2member.c.member_id.in_(writer_ids))
-            .group_by(models.article2member.c.article_id)
-            .having(func.count(models.article2member.c.member_id) == len(writer_ids))
-        )
-        params.append(models.Article.id.in_(article_ids_with_all_writers))
+    if writer_id is not None:
+        params.append(models.Article.writer_id == writer_id)
     if create_time_after is not None:
         params.append(models.Article.create_time > create_time_after)
     if create_time_before is not None:
@@ -80,9 +74,9 @@ def list_articles(
     return query.all()
 
 
-def create_article(db: Session, article: schemas.ArticleCreate):
+def create_article(db: Session, writer_id: int, article: schemas.ArticleCreate):
     try:
-        db_article = models.Article(**article.model_dump())
+        db_article = models.Article(**article.model_dump(), writer_id=writer_id)
         db.add(db_article)
         db.commit()
     except SQLAlchemyError as e:

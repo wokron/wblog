@@ -13,13 +13,6 @@ from sqlalchemy.orm import relationship
 
 from ..core.database import Base
 
-article2member = Table(
-    "article2member",
-    Base.metadata,
-    Column("article_id", ForeignKey("article.id"), primary_key=True),
-    Column("member_id", ForeignKey("member.id"), primary_key=True),
-)
-
 article2tag = Table(
     "article2tag",
     Base.metadata,
@@ -41,10 +34,9 @@ class Article(Base):
     is_deleted = Column(Boolean, nullable=False, default=False)
 
     category_id = Column(Integer, ForeignKey("category.id"))
+    writer_id = Column(Integer, ForeignKey("member.id"))
 
-    writers = relationship(
-        "Member", secondary="article2member", back_populates="articles"
-    )
+    writer = relationship("Member", back_populates="articles")
     comments = relationship("Comment", back_populates="article", cascade="all, delete")
     category = relationship("Category", back_populates="articles")
     tags = relationship("Tag", secondary="article2tag", back_populates="articles")
