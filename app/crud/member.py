@@ -60,9 +60,10 @@ def create_member(db: Session, member: schemas.MemberCreate):
 def update_member(db: Session, member_id: int, member: schemas.MemberUpdate):
     try:
         params = member.model_dump(exclude_unset=True, exclude=["password"])
-        params.update(
-            {"hashed_password": get_password_hash(member.password)}
-        )
+        if member.password is not None:
+            params.update(
+                {"hashed_password": get_password_hash(member.password)}
+            )
         db.query(models.Member).filter(models.Member.id == member_id).update(params)
         db.commit()
     except SQLAlchemyError as e:
