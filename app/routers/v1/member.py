@@ -28,6 +28,13 @@ async def list_members(
     return members
 
 
+@router.get("/me", response_model=schemas.Member)
+async def get_current_member(
+    current_member: models.Member = Depends(get_current_active_member),
+):
+    return current_member
+
+
 @router.get(
     "/{member_id}",
     response_model=schemas.Member,
