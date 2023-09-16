@@ -1,4 +1,4 @@
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, ConfigDict, Field
 from ..models.member import Role
 
 
@@ -8,8 +8,7 @@ class Member(BaseModel):
     role: Role
     is_active: bool
 
-    class Config:
-        orm_mode = True
+    model_config = ConfigDict(from_attributes=True)
 
 
 class MemberCreate(BaseModel):

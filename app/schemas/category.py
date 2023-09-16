@@ -1,4 +1,4 @@
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, Field, ConfigDict
 
 
 class CategoryBase(BaseModel):
@@ -8,8 +8,7 @@ class CategoryBase(BaseModel):
 class Category(CategoryBase):
     id: int = Field(gt=0)
 
-    class Config:
-        orm_mode = True
+    model_config = ConfigDict(from_attributes=True)
 
 
 class CategoryCreate(CategoryBase):

@@ -1,4 +1,4 @@
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, ConfigDict, Field
 
 
 class TagBase(BaseModel):
@@ -8,8 +8,7 @@ class TagBase(BaseModel):
 class Tag(TagBase):
     id: int = Field(gt=0)
 
-    class Config:
-        orm_mode = True
+    model_config = ConfigDict(from_attributes=True)
 
 
 class TagCreate(TagBase):

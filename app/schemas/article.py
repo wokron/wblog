@@ -1,7 +1,8 @@
 from datetime import datetime
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, Field, ConfigDict
 from . import tag, comment
 from .category import Category
+
 
 class WriterInfo(BaseModel):
     id: int = Field(gt=0)
@@ -19,8 +20,7 @@ class Article(BaseModel):
     tags: list[tag.Tag] = []
     writer: WriterInfo
 
-    class Config:
-        orm_mode = True
+    model_config = ConfigDict(from_attributes=True)
 
 
 class ArticleSimplify(BaseModel):
@@ -33,8 +33,7 @@ class ArticleSimplify(BaseModel):
     tags: list[tag.Tag] = []
     writer: WriterInfo
 
-    class Config:
-        orm_mode = True
+    model_config = ConfigDict(from_attributes=True)
 
 
 class ArticleCreate(BaseModel):

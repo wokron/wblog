@@ -1,5 +1,5 @@
 from datetime import datetime
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, ConfigDict, Field
 from . import member
 
 
@@ -12,8 +12,8 @@ class Comment(BaseModel):
     create_time: datetime
     member: member.Member | None
 
-    class Config:
-        orm_mode = True
+    model_config = ConfigDict(from_attributes=True)
+
 
 
 class CommentCreate(BaseModel):
