@@ -102,17 +102,18 @@ async def update_member(
     db: Session = Depends(get_db),
     current_member: models.Member = Depends(get_current_active_member),
 ):
+    member_to_update = crud.get_member(db, member_id)
     if (
         current_member.id != member_id
         and (
-            member.role == models.Role.OWNER
+            member_to_update.role == models.Role.OWNER
             or current_member.role == models.Role.MEMBER
             or (
-                member.role == models.Role.MANAGER
+                member_to_update.role == models.Role.MANAGER
                 and current_member.role == models.Role.MANAGER
             )
         )
-    ) or (current_member.id == member_id and member.role is not None):
+    ) or (current_member.id == member_id and (member.role is not None or member.is_active is not None)):
         raise HTTPException(
             status_code=status.HTTP_403_FORBIDDEN,
             detail="no premission to update member info",

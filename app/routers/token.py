@@ -3,7 +3,7 @@ from fastapi import APIRouter, Depends, Path, HTTPException, status, Body
 from fastapi.security import OAuth2PasswordRequestForm
 
 from sqlalchemy.orm import Session
-from .. import crud, schemas
+from .. import crud, schemas, models
 from ..dependencies.database import get_db
 from ..dependencies.config import get_settings
 from ..config import Settings
@@ -21,12 +21,17 @@ async def login_for_access_token(
     db: Session = Depends(get_db),
     setting: Settings = Depends(get_settings),
 ):
-    member = crud.authenticate_member(db, form_data.username, form_data.password)
+    member: models.Member = crud.authenticate_member(db, form_data.username, form_data.password)
     if member is None:
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
-            detail="Incorrect username or password",
+            detail="incorrect username or password",
             headers={"WWW-Authenticate": "Bearer"},
+        )
+    if not member.is_active:
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail="login is forbiddened",
         )
     access_token_expires = timedelta(minutes=setting.access_token_expire_minutes)
     access_token = create_token(
