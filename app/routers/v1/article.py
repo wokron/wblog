@@ -153,7 +153,7 @@ async def update_article(
         )
 
 
-@router.post("/{article_id}/category/{category_id}", tags=["category"])
+@router.put("/{article_id}/category/{category_id}", tags=["category"])
 async def set_article_category(
     article_id: int = Path(gt=0),
     category_id: int = Path(gt=0),
@@ -175,7 +175,7 @@ async def set_article_category(
         )
 
 
-@router.post("/{article_id}/tag/{tag_id}", tags=["tag"])
+@router.put("/{article_id}/tag/{tag_id}", tags=["tag"])
 async def add_article_tag(
     article_id: int = Path(gt=0),
     tag_id: int = Path(gt=0),

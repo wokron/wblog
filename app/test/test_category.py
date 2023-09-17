@@ -82,7 +82,7 @@ def test_list_categorys():
         json={"title": "123", "content": "## subtitle"},
     )
     assert responnse.status_code == 200
-    responnse = client.post(
+    responnse = client.put(
         "/api/v1/article/1/category/1", headers={"Authorization": f"Bearer {jwt}"}
     )
     assert responnse.status_code == 200

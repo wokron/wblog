@@ -341,7 +341,7 @@ def test_set_article_category():
     assert response.json()["title"] == "a1"
     assert response.json()["category"] == None
 
-    response = client.post(
+    response = client.put(
         "/api/v1/article/1/category/1", headers={"Authorization": f"Bearer {jwt}"}
     )
     assert response.status_code == 200
@@ -351,7 +351,7 @@ def test_set_article_category():
     assert response.json()["title"] == "a1"
     assert response.json()["category"]["id"] == 1
 
-    response = client.post(
+    response = client.put(
         "/api/v1/article/1/category/1", headers={"Authorization": f"Bearer {jwt}"}
     )
     assert response.status_code == 200
@@ -361,7 +361,7 @@ def test_set_article_category():
     assert response.json()["title"] == "a1"
     assert response.json()["category"]["id"] == 1
 
-    response = client.post(
+    response = client.put(
         "/api/v1/article/1/category/2", headers={"Authorization": f"Bearer {jwt}"}
     )
     assert response.status_code == 200
@@ -411,7 +411,7 @@ def test_add_article_tag():
     assert response.json()["title"] == "a1"
     assert response.json()["tags"] == []
 
-    response = client.post(
+    response = client.put(
         "/api/v1/article/1/tag/1", headers={"Authorization": f"Bearer {jwt}"}
     )
     assert response.status_code == 200
@@ -426,7 +426,7 @@ def test_add_article_tag():
         }
     ]
 
-    response = client.post(
+    response = client.put(
         "/api/v1/article/1/tag/1", headers={"Authorization": f"Bearer {jwt}"}
     )
     assert response.status_code == 200
@@ -441,7 +441,7 @@ def test_add_article_tag():
         }
     ]
 
-    response = client.post(
+    response = client.put(
         "/api/v1/article/1/tag/2", headers={"Authorization": f"Bearer {jwt}"}
     )
     assert response.status_code == 200
@@ -479,7 +479,7 @@ def test_remove_article_tag():
     )
     assert response.status_code == 200
 
-    response = client.post(
+    response = client.put(
         "/api/v1/article/1/tag/1", headers={"Authorization": f"Bearer {jwt}"}
     )
     assert response.status_code == 200
