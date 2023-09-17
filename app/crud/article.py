@@ -125,6 +125,16 @@ def add_article_tag(db: Session, article_id: int, tag_id: int):
     tag: models.Tag = get_tag(db, tag_id)
     if article is None or tag is None:
         return True
+    if (
+        db.query(models.article2tag)
+        .filter(
+            models.article2tag.c.article_id == article_id,
+            models.article2tag.c.tag_id == tag_id,
+        )
+        .first()
+        is not None
+    ):
+        return True
 
     try:
         article.tags.append(tag)
