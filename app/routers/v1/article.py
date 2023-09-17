@@ -122,24 +122,29 @@ async def update_article(
     if article_to_update is None:
         return
     if article.is_deleted is not None:
-        # when is_deleted is set, title and content will not update
-        article.title = None
-        article.content = None
-        if (
-            current_member.id != article_to_update.writer_id
-            and (
-                article_to_update.writer.role == models.Role.OWNER
-                or current_member.role == models.Role.MEMBER
-                or (
-                    article_to_update.writer.role == models.Role.MANAGER
-                    and current_member.role == models.Role.MANAGER
-                )
+        if article.title is not None or article.content is not None:
+            raise HTTPException(
+                status_code=status.HTTP_403_FORBIDDEN,
+                detail="when is_deleted is set, title and content can not update at same time",
+            )
+        if current_member.id != article_to_update.writer_id and (
+            article_to_update.writer.role == models.Role.OWNER
+            or current_member.role == models.Role.MEMBER
+            or (
+                article_to_update.writer.role == models.Role.MANAGER
+                and current_member.role == models.Role.MANAGER
             )
         ):
-            raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="no premission to set is_deleted in article")
+            raise HTTPException(
+                status_code=status.HTTP_403_FORBIDDEN,
+                detail="no premission to set is_deleted in article",
+            )
     else:
         if current_member.id != article_to_update.writer_id:
-            raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="no premission to update article")
+            raise HTTPException(
+                status_code=status.HTTP_403_FORBIDDEN,
+                detail="no premission to update article",
+            )
 
     success = crud.update_article(db, article_id, article)
     if not success:
@@ -157,8 +162,11 @@ async def set_article_category(
 ):
     article: models.Article = crud.get_article(db, article_id)
     if current_member.id != article.writer_id:
-        raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="no premission to set article's category")
-    
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail="no premission to set article's category",
+        )
+
     success = crud.set_article_category(db, article_id, category_id)
     if not success:
         raise HTTPException(
@@ -176,7 +184,10 @@ async def add_article_tag(
 ):
     article: models.Article = crud.get_article(db, article_id)
     if current_member.id != article.writer_id:
-        raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="no premission to add tag to article")
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail="no premission to add tag to article",
+        )
 
     success = crud.add_article_tag(db, article_id, tag_id)
     if not success:
@@ -195,7 +206,10 @@ async def remove_article_tag(
 ):
     article: models.Article = crud.get_article(db, article_id)
     if current_member.id != article.writer_id:
-        raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="no premission to remove tags of article")
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail="no premission to remove tags of article",
+        )
 
     success = crud.remove_article_tag(db, article_id, tag_id)
     if not success:
@@ -234,7 +248,9 @@ async def create_article_comment(
     return result_comment
 
 
-@router.post("/{article_id}/comment/visitor", response_model=schemas.Comment, tags=["comment"])
+@router.post(
+    "/{article_id}/comment/visitor", response_model=schemas.Comment, tags=["comment"]
+)
 async def create_article_comment(
     comment: schemas.CommentCreate,
     article_id: int = Path(gt=0),
