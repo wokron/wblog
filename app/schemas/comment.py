@@ -15,7 +15,6 @@ class Comment(BaseModel):
     model_config = ConfigDict(from_attributes=True)
 
 
-
 class CommentCreate(BaseModel):
     content: str = Field(max_length=250)
     commenter_name: str | None = Field(None, max_length=20)
@@ -23,5 +22,3 @@ class CommentCreate(BaseModel):
 
 class CommentUpdate(BaseModel):
     content: str = Field(None, max_length=250)
-    add_like: bool = None
-    add_dislike: bool = None

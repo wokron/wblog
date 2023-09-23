@@ -66,3 +66,29 @@ def update_comment(
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST, detail="fail to update comment"
         )
+
+
+@router.post("/{comment_id}/like")
+def add_comment_like(
+    comment_id: int = Path(gt=0),
+    db: Session = Depends(get_db),
+):
+    success = crud.add_comment_like(db, comment_id)
+    if not success:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="fail to add like of comment",
+        )
+
+
+@router.post("/{comment_id}/dislike")
+def add_comment_dislike(
+    comment_id: int = Path(gt=0),
+    db: Session = Depends(get_db),
+):
+    success = crud.add_comment_dislike(db, comment_id)
+    if not success:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="fail to add dislike of comment",
+        )

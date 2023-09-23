@@ -33,9 +33,15 @@ def list_comments(
     return query.offset(skip).limit(limit).all()
 
 
-def create_comment(db: Session, article_id: int, member_id: int, comment: schemas.CommentCreate):
+def create_comment(
+    db: Session, article_id: int, member_id: int, comment: schemas.CommentCreate
+):
     try:
-        db_comment = models.Comment(**comment.model_dump(), article_id=article_id, member_id=member_id)
+        db_comment = models.Comment(
+            **comment.model_dump(),
+            article_id=article_id,
+            member_id=member_id,
+        )
         db.add(db_comment)
         db.commit()
     except SQLAlchemyError as e:
@@ -56,17 +62,36 @@ def delete_comment(db: Session, comment_id: int):
 
 
 def update_comment(db: Session, comment_id: int, comment: schemas.CommentUpdate):
+    try:
+        db.query(models.Comment).filter(models.Comment.id == comment_id).update(
+            comment.model_dump(exclude=True)
+        )
+        db.commit()
+    except SQLAlchemyError as e:
+        db.rollback()
+        return False
+    return True
+
+
+def add_comment_like(db: Session, comment_id: int):
     comment_to_update = get_comment(db, comment_id)
     if comment_to_update is None:
         return True
-
     try:
-        if comment.add_like is not None:
-            comment_to_update.like += 1
-        if comment.add_dislike is not None:
-            comment_to_update.dislike += 1
-        if comment.content is not None:
-            comment_to_update.content = comment.content
+        comment_to_update.like += 1
+        db.commit()
+    except SQLAlchemyError as e:
+        db.rollback()
+        return False
+    return True
+
+
+def add_comment_dislike(db: Session, comment_id: int):
+    comment_to_update = get_comment(db, comment_id)
+    if comment_to_update is None:
+        return True
+    try:
+        comment_to_update.dislike += 1
         db.commit()
     except SQLAlchemyError as e:
         db.rollback()
