@@ -27,9 +27,9 @@ class Article(Base):
     id = Column(Integer, primary_key=True, autoincrement=True, index=True)
     title = Column(String, nullable=False, unique=True)
     content = Column(Text, nullable=False, default="")
-    create_time = Column(DateTime, nullable=False, default=datetime.now)
+    create_time = Column(DateTime, nullable=False, default=datetime.utcnow)
     update_time = Column(
-        DateTime, nullable=False, default=datetime.now, onupdate=datetime.now
+        DateTime, nullable=False, default=datetime.utcnow, onupdate=datetime.utcnow
     )
     is_deleted = Column(Boolean, nullable=False, default=False)
 
