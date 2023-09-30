@@ -1,5 +1,4 @@
-from .mock import create_client
-from .utils import login
+from .utils import login, create_client
 
 
 def test_create_comment():

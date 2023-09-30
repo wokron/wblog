@@ -1,5 +1,4 @@
-from .mock import create_client
-from .utils import login
+from .utils import login, create_client
 
 
 def test_create_tag():
@@ -126,7 +125,9 @@ def test_delete_tag():
         },
     ]
 
-    responnse = client.delete("/api/v1/tag/1", headers={"Authorization": f"Bearer {jwt}"})
+    responnse = client.delete(
+        "/api/v1/tag/1", headers={"Authorization": f"Bearer {jwt}"}
+    )
     assert responnse.status_code == 200
 
     responnse = client.get("/api/v1/tag")
@@ -138,10 +139,14 @@ def test_delete_tag():
         },
     ]
 
-    responnse = client.delete("/api/v1/tag/1", headers={"Authorization": f"Bearer {jwt}"})
+    responnse = client.delete(
+        "/api/v1/tag/1", headers={"Authorization": f"Bearer {jwt}"}
+    )
     assert responnse.status_code == 200
 
-    responnse = client.delete("/api/v1/tag/2", headers={"Authorization": f"Bearer {jwt}"})
+    responnse = client.delete(
+        "/api/v1/tag/2", headers={"Authorization": f"Bearer {jwt}"}
+    )
     assert responnse.status_code == 200
 
     responnse = client.get("/api/v1/tag")
