@@ -88,7 +88,12 @@ def create_article(db: Session, writer_id: int, article: schemas.ArticleCreate):
 
 def delete_article(db: Session, article_id: int):
     try:
-        db.query(models.Article).filter(models.Article.id == article_id).delete()
+        # here will not use db.query().filter().delete()
+        # because of https://github.com/sqlalchemy/sqlalchemy/discussions/7974
+        article = get_article(db, article_id)
+        if article is None:
+            return True
+        db.delete(article)
         db.commit()
     except SQLAlchemyError as e:
         db.rollback()
