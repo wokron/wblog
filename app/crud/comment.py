@@ -64,7 +64,7 @@ def delete_comment(db: Session, comment_id: int):
 def update_comment(db: Session, comment_id: int, comment: schemas.CommentUpdate):
     try:
         db.query(models.Comment).filter(models.Comment.id == comment_id).update(
-            comment.model_dump(exclude=True)
+            comment.model_dump(exclude_unset=True)
         )
         db.commit()
     except SQLAlchemyError as e:
