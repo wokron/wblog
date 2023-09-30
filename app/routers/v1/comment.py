@@ -31,7 +31,10 @@ def delete_comment(
     comment = crud.get_comment(db, comment_id)
     if comment is None:
         return
-    if comment.article.writer_id != current_member.id:
+    if (
+        comment.article.writer_id != current_member.id
+        and comment.member_id != current_member.id
+    ):
         raise HTTPException(
             status_code=status.HTTP_403_FORBIDDEN,
             detail="no permission to delete comment",

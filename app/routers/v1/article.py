@@ -240,6 +240,11 @@ async def create_article_comment(
     db: Session = Depends(get_db),
     current_member: models.Member = Depends(get_current_active_member),
 ):
+    if comment.commenter_name is not None:
+        raise HTTPException(
+            status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
+            detail="member should not set name",
+        )
     result_comment = crud.create_comment(db, article_id, current_member.id, comment)
     if result_comment is None:
         raise HTTPException(
@@ -251,11 +256,16 @@ async def create_article_comment(
 @router.post(
     "/{article_id}/comment/visitor", response_model=schemas.Comment, tags=["comment"]
 )
-async def create_article_comment(
+async def create_article_comment_for_visitor(
     comment: schemas.CommentCreate,
     article_id: int = Path(gt=0),
     db: Session = Depends(get_db),
 ):
+    if comment.commenter_name is None:
+        raise HTTPException(
+            status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
+            detail="visitor must set name",
+        )
     result_comment = crud.create_comment(db, article_id, None, comment)
     if result_comment is None:
         raise HTTPException(
