@@ -3,7 +3,7 @@ from .utils import login, create_client
 
 def test_create_comment():
     client = create_client()
-    jwt = login(client, "Owner", "123456")
+    jwt = login(client, "Owner", "12345678")
 
     response = client.post(
         "/api/v1/article",
@@ -69,7 +69,7 @@ def test_create_comment():
 
 def test_update_comment():
     client = create_client()
-    jwt = login(client, "Owner", "123456")
+    jwt = login(client, "Owner", "12345678")
 
     response = client.post(
         "/api/v1/article",
@@ -137,7 +137,7 @@ def test_update_comment():
 
 def test_delete_comment():
     client = create_client()
-    jwt = login(client, "Owner", "123456")
+    jwt = login(client, "Owner", "12345678")
 
     response = client.post(
         "/api/v1/article",
@@ -228,7 +228,7 @@ def test_delete_comment():
     )
     assert response.status_code == 200
 
-    jwt = login(client, "Owner", "123456")
+    jwt = login(client, "Owner", "12345678")
     response = client.delete(
         "/api/v1/comment/4", headers={"Authorization": f"Bearer {jwt}"}
     )

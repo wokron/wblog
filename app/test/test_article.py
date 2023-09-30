@@ -3,7 +3,7 @@ from .utils import login, create_client
 
 def test_create_article():
     client = create_client()
-    jwt = login(client, "Owner", "123456")
+    jwt = login(client, "Owner", "12345678")
 
     response = client.post(
         "/api/v1/article",
@@ -40,7 +40,7 @@ def test_create_article():
 
 def test_get_article():
     client = create_client()
-    jwt = login(client, "Owner", "123456")
+    jwt = login(client, "Owner", "12345678")
 
     response = client.post(
         "/api/v1/article",
@@ -77,7 +77,7 @@ def test_get_article():
 
 def test_delete_article():
     client = create_client()
-    jwt = login(client, "Owner", "123456")
+    jwt = login(client, "Owner", "12345678")
 
     response = client.post(
         "/api/v1/member",
@@ -145,7 +145,7 @@ def test_delete_article():
 
 def test_delete_article_by_other():
     client = create_client()
-    jwt = login(client, "Owner", "123456")
+    jwt = login(client, "Owner", "12345678")
 
     # create common member member1
     response = client.post(
@@ -232,7 +232,7 @@ def test_delete_article_by_other():
     assert response.status_code == 200
 
     # owner can delete article 2 and 1
-    jwt = login(client, "Owner", "123456")
+    jwt = login(client, "Owner", "12345678")
     response = client.delete(
         "/api/v1/article/2", headers={"Authorization": f"Bearer {jwt}"}
     )
@@ -245,7 +245,7 @@ def test_delete_article_by_other():
 
 def test_update_article():
     client = create_client()
-    jwt = login(client, "Owner", "123456")
+    jwt = login(client, "Owner", "12345678")
 
     response = client.post(
         "/api/v1/article",
@@ -313,7 +313,7 @@ def test_update_article():
 
 def test_set_article_category():
     client = create_client()
-    jwt = login(client, "Owner", "123456")
+    jwt = login(client, "Owner", "12345678")
 
     response = client.post(
         "/api/v1/category",
@@ -383,7 +383,7 @@ def test_set_article_category():
 
 def test_add_article_tag():
     client = create_client()
-    jwt = login(client, "Owner", "123456")
+    jwt = login(client, "Owner", "12345678")
 
     response = client.post(
         "/api/v1/tag",
@@ -462,7 +462,7 @@ def test_add_article_tag():
 
 def test_remove_article_tag():
     client = create_client()
-    jwt = login(client, "Owner", "123456")
+    jwt = login(client, "Owner", "12345678")
 
     response = client.post(
         "/api/v1/tag",

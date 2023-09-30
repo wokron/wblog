@@ -7,7 +7,7 @@ def test_create_category():
     responnse = client.post("/api/v1/category", json={"name": "category1"})
     assert responnse.status_code == 401
 
-    jwt = login(client, "Owner", "123456")
+    jwt = login(client, "Owner", "12345678")
     responnse = client.post(
         "/api/v1/category", headers={"Authorization": f"Bearer {jwt}"}, json={"name": "category1"}
     )
@@ -28,7 +28,7 @@ def test_create_category():
 
 def test_get_category():
     client = create_client()
-    jwt = login(client, "Owner", "123456")
+    jwt = login(client, "Owner", "12345678")
     responnse = client.post(
         "/api/v1/category", headers={"Authorization": f"Bearer {jwt}"}, json={"name": "category1"}
     )
@@ -44,7 +44,7 @@ def test_get_category():
 
 def test_list_categorys():
     client = create_client()
-    jwt = login(client, "Owner", "123456")
+    jwt = login(client, "Owner", "12345678")
     responnse = client.post(
         "/api/v1/category", headers={"Authorization": f"Bearer {jwt}"}, json={"name": "category1"}
     )
@@ -98,7 +98,7 @@ def test_list_categorys():
 
 def test_delete_category():
     client = create_client()
-    jwt = login(client, "Owner", "123456")
+    jwt = login(client, "Owner", "12345678")
     responnse = client.post(
         "/api/v1/category", headers={"Authorization": f"Bearer {jwt}"}, json={"name": "category1"}
     )

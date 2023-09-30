@@ -7,7 +7,7 @@ def test_create_tag():
     responnse = client.post("/api/v1/tag", json={"name": "tag1"})
     assert responnse.status_code == 401
 
-    jwt = login(client, "Owner", "123456")
+    jwt = login(client, "Owner", "12345678")
     responnse = client.post(
         "/api/v1/tag", headers={"Authorization": f"Bearer {jwt}"}, json={"name": "tag1"}
     )
@@ -28,7 +28,7 @@ def test_create_tag():
 
 def test_get_tag():
     client = create_client()
-    jwt = login(client, "Owner", "123456")
+    jwt = login(client, "Owner", "12345678")
     responnse = client.post(
         "/api/v1/tag", headers={"Authorization": f"Bearer {jwt}"}, json={"name": "tag1"}
     )
@@ -45,7 +45,7 @@ def test_get_tag():
 
 def test_list_tags():
     client = create_client()
-    jwt = login(client, "Owner", "123456")
+    jwt = login(client, "Owner", "12345678")
     responnse = client.post(
         "/api/v1/tag", headers={"Authorization": f"Bearer {jwt}"}, json={"name": "tag1"}
     )
@@ -99,7 +99,7 @@ def test_list_tags():
 
 def test_delete_tag():
     client = create_client()
-    jwt = login(client, "Owner", "123456")
+    jwt = login(client, "Owner", "12345678")
     responnse = client.post(
         "/api/v1/tag", headers={"Authorization": f"Bearer {jwt}"}, json={"name": "tag1"}
     )

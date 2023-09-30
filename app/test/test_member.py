@@ -3,12 +3,12 @@ from .utils import login, create_client
 
 def test_login():
     client = create_client()
-    jwt = login(client, "Owner", "123456")
+    jwt = login(client, "Owner", "12345678")
 
 
 def test_get_current_member():
     client = create_client()
-    jwt = login(client, "Owner", "123456")
+    jwt = login(client, "Owner", "12345678")
     response = client.get(
         "/api/v1/member/me",
         headers={"Authorization": f"Bearer {jwt}"},
@@ -24,7 +24,7 @@ def test_get_current_member():
 
 def test_get_member_success():
     client = create_client()
-    jwt = login(client, "Owner", "123456")
+    jwt = login(client, "Owner", "12345678")
     response = client.get(
         "/api/v1/member/1", headers={"Authorization": f"Bearer {jwt}"}
     )
@@ -39,7 +39,7 @@ def test_get_member_success():
 
 def test_get_member_with_invalid_id():
     client = create_client()
-    jwt = login(client, "Owner", "123456")
+    jwt = login(client, "Owner", "12345678")
     response = client.get(
         "/api/v1/member/100", headers={"Authorization": f"Bearer {jwt}"}
     )
@@ -48,7 +48,7 @@ def test_get_member_with_invalid_id():
 
 def test_create_member_simple():
     client = create_client()
-    jwt = login(client, "Owner", "123456")
+    jwt = login(client, "Owner", "12345678")
     # create member1
     response = client.post(
         "/api/v1/member",
@@ -101,7 +101,7 @@ def test_create_member_simple():
 
 def test_create_member_permission_check():
     client = create_client()
-    jwt = login(client, "Owner", "123456")
+    jwt = login(client, "Owner", "12345678")
     # Onwer try to create member as Owner
     response = client.post(
         "/api/v1/member",
@@ -169,7 +169,7 @@ def test_create_member_permission_check():
 
 def test_update_member_simple():
     client = create_client()
-    jwt = login(client, "Owner", "123456")
+    jwt = login(client, "Owner", "12345678")
 
     # get personal info
     response = client.get(
@@ -191,7 +191,7 @@ def test_update_member_simple():
         headers={"Authorization": f"Bearer {jwt}"},
     )
     assert response.status_code == 200
-    jwt = login(client, "OwnerNewName", "123456")  # relogin is needed
+    jwt = login(client, "OwnerNewName", "12345678")  # relogin is needed
 
     # get personal info again
     response = client.get(
@@ -226,7 +226,7 @@ def test_update_member_simple():
 
 def test_update_member_by_other():
     client = create_client()
-    jwt = login(client, "Owner", "123456")
+    jwt = login(client, "Owner", "12345678")
 
     # create manager member1
     response = client.post(
