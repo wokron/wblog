@@ -3,7 +3,7 @@ from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 from sqlalchemy.pool import StaticPool
 
-from ..core.database import Base
+from ..database import Base
 from ..main import app
 from ..dependencies.database import get_db
 from ..dependencies.config import get_settings

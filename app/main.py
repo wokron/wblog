@@ -1,7 +1,7 @@
 from fastapi import FastAPI
 
 from .routers import router
-from .core import database
+from . import database
 
 database.Base.metadata.create_all(bind=database.engine)
 

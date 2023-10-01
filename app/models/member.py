@@ -4,7 +4,7 @@ from sqlalchemy.orm import relationship
 from ..dependencies import config
 from ..utils import get_password_hash
 
-from ..core.database import Base
+from ..database import Base
 
 
 class Role(enum.Enum):

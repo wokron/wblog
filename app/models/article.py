@@ -11,7 +11,7 @@ from sqlalchemy import (
 )
 from sqlalchemy.orm import relationship
 
-from ..core.database import Base
+from ..database import Base
 
 article2tag = Table(
     "article2tag",
