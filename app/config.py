@@ -23,6 +23,6 @@ class Settings(BaseSettings):
     db_host: str | None = Field(None, min_length=1)
     db_port: int | None = Field(None, ge=0, le=65535)
     db_database: str = Field("wblog.db", min_length=1)
-    db_query: DBQuerySettings = DBQuerySettings(check_same_thread="true")
+    db_query: DBQuerySettings = DBQuerySettings()
 
     model_config = SettingsConfigDict(env_file=".env", env_nested_delimiter="__")
