@@ -62,7 +62,7 @@ def list_articles(
     if is_deleted is not None:
         params.append(models.Article.is_deleted == is_deleted)
 
-    query = db.query(models.Article).filter(*params).offset(skip).limit(limit)
+    query = db.query(models.Article).filter(*params)
 
     if order_by is not None:
         if order_by.startswith("-"):
@@ -71,7 +71,7 @@ def list_articles(
         else:
             query = query.order_by(order_by)
 
-    return query.all()
+    return query.offset(skip).limit(limit).all()
 
 
 def create_article(db: Session, writer_id: int, article: schemas.ArticleCreate):
