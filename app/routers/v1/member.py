@@ -11,11 +11,7 @@ router = APIRouter(
 )
 
 
-@router.get(
-    "/",
-    response_model=list[schemas.Member],
-    dependencies=[Depends(get_current_active_member)],
-)
+@router.get("/", response_model=list[schemas.Member])
 async def list_members(
     name_like: str = Query(None, min_length=1, max_length=20),
     role: models.Role = None,
@@ -35,11 +31,7 @@ async def get_current_member(
     return current_member
 
 
-@router.get(
-    "/{member_id}",
-    response_model=schemas.Member,
-    dependencies=[Depends(get_current_active_member)],
-)
+@router.get("/{member_id}", response_model=schemas.Member)
 async def get_member_by_id(member_id: int = Path(gt=0), db: Session = Depends(get_db)):
     result_member = crud.get_member(db, member_id)
     if result_member is None:
@@ -113,7 +105,10 @@ async def update_member(
                 and current_member.role == models.Role.MANAGER
             )
         )
-    ) or (current_member.id == member_id and (member.role is not None or member.is_active is not None)):
+    ) or (
+        current_member.id == member_id
+        and (member.role is not None or member.is_active is not None)
+    ):
         raise HTTPException(
             status_code=status.HTTP_403_FORBIDDEN,
             detail="no premission to update member info",
