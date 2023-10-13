@@ -39,6 +39,8 @@ class ArticleSimplify(BaseModel):
 class ArticleCreate(BaseModel):
     title: str = Field(min_length=1, max_length=50)
     content: str = ""
+    tags: list[str] = []
+    category: str | None = Field(None, min_length=1, max_length=20)
 
 
 class ArticleUpdate(BaseModel):

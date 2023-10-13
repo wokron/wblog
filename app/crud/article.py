@@ -5,7 +5,13 @@ from sqlalchemy.exc import SQLAlchemyError
 
 from .. import models
 from .. import schemas
-from . import get_tag
+from . import (
+    get_tag,
+    get_tag_by_name,
+    create_tag,
+    get_category_by_name,
+    create_category,
+)
 
 
 def get_article(db: Session, article_id: int):
@@ -76,7 +82,26 @@ def list_articles(
 
 def create_article(db: Session, writer_id: int, article: schemas.ArticleCreate):
     try:
-        db_article = models.Article(**article.model_dump(), writer_id=writer_id)
+        db_article = models.Article(
+            **article.model_dump(exclude=["tags", "category"]), writer_id=writer_id
+        )
+
+        for tag_name in article.tags:
+            tag = get_tag_by_name(db, tag_name)
+            if tag is None:
+                tag = create_tag(db, schemas.TagCreate(name=tag_name))
+                db.add(tag)
+            db_article.tags.append(tag)
+
+        if article.category is not None:
+            category = get_category_by_name(db, article.category)
+            if category is None:
+                category = create_category(
+                    db, schemas.CategoryCreate(name=article.category)
+                )
+                db.add(category)
+            db_article.category = category
+
         db.add(db_article)
         db.commit()
     except SQLAlchemyError as e:
