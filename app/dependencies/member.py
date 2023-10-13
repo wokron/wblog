@@ -4,7 +4,7 @@ from .oauth2 import oauth2_scheme
 from .database import get_db
 from ..utils import jwt_decode
 from .. import crud, models
-
+import jwt
 
 async def get_current_member(
     token: str = Depends(oauth2_scheme), db: Session = Depends(get_db)
@@ -14,7 +14,10 @@ async def get_current_member(
         detail="could not validate credentials",
         headers={"WWW-Authenticate": "Bearer"},
     )
-    payload = jwt_decode(token)
+    try:
+        payload = jwt_decode(token)
+    except jwt.ExpiredSignatureError as e:
+        raise credentials_exception
     if payload is None:
         raise credentials_exception
     name: str = payload.get("sub")
