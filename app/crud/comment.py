@@ -14,16 +14,16 @@ def get_comment(db: Session, comment_id: int):
 
 def list_comments(
     db: Session,
-    article_id: int,
+    article_id: int = None,
     order_by: str = "-create_time",
     skip: int = 0,
     limit: int = 10,
 ):
-    article = get_article(db, article_id)
-    if article is None:
-        return []
+    params = []
+    if article_id is not None:
+        params.append(models.Comment.article_id == article_id)
 
-    query = db.query(models.Comment).filter(models.Comment.article_id == article_id)
+    query = db.query(models.Comment).filter(*params)
     if order_by is not None:
         if order_by.startswith("-"):
             order_by = order_by[1:]

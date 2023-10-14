@@ -1,5 +1,12 @@
-from datetime import datetime
-from fastapi import APIRouter, Depends, Path, HTTPException, Query, status, Body
+from fastapi import (
+    APIRouter,
+    Depends,
+    Path,
+    HTTPException,
+    Query,
+    Response,
+    status,
+)
 
 from sqlalchemy.orm import Session
 from ... import crud, schemas, models
@@ -10,6 +17,20 @@ router = APIRouter(
     prefix="/comment",
     tags=["comment"],
 )
+
+
+@router.get("/", response_model=list[schemas.Comment])
+def list_comments(
+    response: Response,
+    article_id: int = Query(None, gt=0),
+    order_by: str = Query("-create_time", pattern="^-?(create_time|like|dislike)$"),
+    skip: int = Query(0, ge=0),
+    limit: int = Query(10, gt=0),
+    db: Session = Depends(get_db),
+):
+    comments, total = crud.list_comments(db, article_id, order_by, skip, limit)
+    response.headers["X-Total-Count"] = str(total)
+    return comments
 
 
 @router.get("/{comment_id}", response_model=schemas.Comment)

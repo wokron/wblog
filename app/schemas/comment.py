@@ -3,6 +3,11 @@ from pydantic import BaseModel, ConfigDict, Field
 from . import member
 
 
+class ArticleForComment(BaseModel):
+    id: int = Field(gt=0)
+    title: str = Field(min_length=1, max_length=50)
+
+
 class Comment(BaseModel):
     id: int = Field(gt=0)
     content: str = Field(max_length=250)
@@ -11,6 +16,7 @@ class Comment(BaseModel):
     dislike: int = Field(ge=0)
     create_time: datetime
     member: member.Member | None
+    article: ArticleForComment
 
     model_config = ConfigDict(from_attributes=True)
 
