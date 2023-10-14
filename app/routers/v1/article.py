@@ -153,10 +153,10 @@ async def update_article(
         )
 
 
-@router.put("/{article_id}/category/{category_id}", tags=["category"])
+@router.put("/{article_id}/category", tags=["category"])
 async def set_article_category(
+    category: schemas.CategoryWithName,
     article_id: int = Path(gt=0),
-    category_id: int = Path(gt=0),
     db: Session = Depends(get_db),
     current_member: models.Member = Depends(get_current_active_member),
 ):
@@ -167,7 +167,7 @@ async def set_article_category(
             detail="no premission to set article's category",
         )
 
-    success = crud.set_article_category(db, article_id, category_id)
+    success = crud.set_article_category(db, article_id, category)
     if not success:
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
@@ -175,10 +175,10 @@ async def set_article_category(
         )
 
 
-@router.put("/{article_id}/tag/{tag_id}", tags=["tag"])
+@router.put("/{article_id}/tag", tags=["tag"])
 async def add_article_tag(
+    tag: schemas.TagWithName,
     article_id: int = Path(gt=0),
-    tag_id: int = Path(gt=0),
     db: Session = Depends(get_db),
     current_member: models.Member = Depends(get_current_active_member),
 ):
@@ -189,7 +189,7 @@ async def add_article_tag(
             detail="no premission to add tag to article",
         )
 
-    success = crud.add_article_tag(db, article_id, tag_id)
+    success = crud.add_article_tag(db, article_id, tag)
     if not success:
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,

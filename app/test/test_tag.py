@@ -83,7 +83,9 @@ def test_list_tags():
     )
     assert responnse.status_code == 200
     responnse = client.put(
-        "/api/v1/article/1/tag/1", headers={"Authorization": f"Bearer {jwt}"}
+        "/api/v1/article/1/tag",
+        headers={"Authorization": f"Bearer {jwt}"},
+        json={"name": "tag1"},
     )
     assert responnse.status_code == 200
 

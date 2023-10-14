@@ -138,11 +138,18 @@ def update_article(db: Session, article_id: int, article: schemas.ArticleUpdate)
     return True
 
 
-def set_article_category(db: Session, article_id: int, category_id: int):
+def set_article_category(
+    db: Session, article_id: int, category: schemas.CategoryWithName
+):
     try:
-        db.query(models.Article).filter(models.Article.id == article_id).update(
-            {"category_id": category_id}
-        )
+        article = get_article(db, article_id)
+        if article is None:
+            return True
+        result_category = get_category_by_name(db, category.name)
+        if result_category is None:
+            result_category = models.Category(**category.model_dump())
+            db.add(result_category)
+        article.category = result_category
         db.commit()
     except SQLAlchemyError as e:
         db.rollback()
@@ -150,24 +157,29 @@ def set_article_category(db: Session, article_id: int, category_id: int):
     return True
 
 
-def add_article_tag(db: Session, article_id: int, tag_id: int):
-    article: models.Article = get_article(db, article_id)
-    tag: models.Tag = get_tag(db, tag_id)
-    if article is None or tag is None:
-        return True
-    if (
-        db.query(models.article2tag)
-        .filter(
-            models.article2tag.c.article_id == article_id,
-            models.article2tag.c.tag_id == tag_id,
-        )
-        .first()
-        is not None
-    ):
-        return True
-
+def add_article_tag(db: Session, article_id: int, tag: schemas.TagWithName):
     try:
-        article.tags.append(tag)
+        article: models.Article = get_article(db, article_id)
+        if article is None:
+            return True
+        result_tag = get_tag_by_name(db, tag.name)
+        if result_tag is None:
+            result_tag = models.Tag(**tag.model_dump())
+            db.add(result_tag)
+
+        if (
+            db.query(models.article2tag)
+            .filter(
+                models.article2tag.c.article_id == article_id,
+                models.article2tag.c.tag_id == result_tag.id,
+            )
+            .first()
+            is not None
+        ):
+            db.commit()
+            return True
+
+        article.tags.append(result_tag)
         db.commit()
     except SQLAlchemyError as e:
         db.rollback()

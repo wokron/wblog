@@ -13,3 +13,7 @@ class Category(CategoryBase):
 
 class CategoryCreate(CategoryBase):
     pass
+
+
+class CategoryWithName(CategoryBase):
+    pass

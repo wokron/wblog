@@ -316,19 +316,6 @@ def test_set_article_category():
     jwt = login(client, "Owner", "12345678")
 
     response = client.post(
-        "/api/v1/category",
-        headers={"Authorization": f"Bearer {jwt}"},
-        json={"name": "c1"},
-    )
-    assert response.status_code == 200
-    response = client.post(
-        "/api/v1/category",
-        headers={"Authorization": f"Bearer {jwt}"},
-        json={"name": "c2"},
-    )
-    assert response.status_code == 200
-
-    response = client.post(
         "/api/v1/article",
         headers={"Authorization": f"Bearer {jwt}"},
         json={"title": "a1"},
@@ -341,7 +328,9 @@ def test_set_article_category():
     assert response.json()["category"] == None
 
     response = client.put(
-        "/api/v1/article/1/category/1", headers={"Authorization": f"Bearer {jwt}"}
+        "/api/v1/article/1/category",
+        headers={"Authorization": f"Bearer {jwt}"},
+        json={"name": "c1"},
     )
     assert response.status_code == 200
 
@@ -349,9 +338,12 @@ def test_set_article_category():
     assert response.status_code == 200
     assert response.json()["title"] == "a1"
     assert response.json()["category"]["id"] == 1
+    assert response.json()["category"]["name"] == "c1"
 
     response = client.put(
-        "/api/v1/article/1/category/1", headers={"Authorization": f"Bearer {jwt}"}
+        "/api/v1/article/1/category",
+        headers={"Authorization": f"Bearer {jwt}"},
+        json={"name": "c1"},
     )
     assert response.status_code == 200
 
@@ -359,9 +351,12 @@ def test_set_article_category():
     assert response.status_code == 200
     assert response.json()["title"] == "a1"
     assert response.json()["category"]["id"] == 1
+    assert response.json()["category"]["name"] == "c1"
 
     response = client.put(
-        "/api/v1/article/1/category/2", headers={"Authorization": f"Bearer {jwt}"}
+        "/api/v1/article/1/category",
+        headers={"Authorization": f"Bearer {jwt}"},
+        json={"name": "c2"},
     )
     assert response.status_code == 200
 
@@ -369,6 +364,7 @@ def test_set_article_category():
     assert response.status_code == 200
     assert response.json()["title"] == "a1"
     assert response.json()["category"]["id"] == 2
+    assert response.json()["category"]["name"] == "c2"
 
     response = client.delete(
         "/api/v1/category/2", headers={"Authorization": f"Bearer {jwt}"}
@@ -386,19 +382,6 @@ def test_add_article_tag():
     jwt = login(client, "Owner", "12345678")
 
     response = client.post(
-        "/api/v1/tag",
-        headers={"Authorization": f"Bearer {jwt}"},
-        json={"name": "t1"},
-    )
-    assert response.status_code == 200
-    response = client.post(
-        "/api/v1/tag",
-        headers={"Authorization": f"Bearer {jwt}"},
-        json={"name": "t2"},
-    )
-    assert response.status_code == 200
-
-    response = client.post(
         "/api/v1/article",
         headers={"Authorization": f"Bearer {jwt}"},
         json={"title": "a1"},
@@ -411,7 +394,9 @@ def test_add_article_tag():
     assert response.json()["tags"] == []
 
     response = client.put(
-        "/api/v1/article/1/tag/1", headers={"Authorization": f"Bearer {jwt}"}
+        "/api/v1/article/1/tag",
+        headers={"Authorization": f"Bearer {jwt}"},
+        json={"name": "t1"},
     )
     assert response.status_code == 200
 
@@ -426,7 +411,9 @@ def test_add_article_tag():
     ]
 
     response = client.put(
-        "/api/v1/article/1/tag/1", headers={"Authorization": f"Bearer {jwt}"}
+        "/api/v1/article/1/tag",
+        headers={"Authorization": f"Bearer {jwt}"},
+        json={"name": "t1"},
     )
     assert response.status_code == 200
 
@@ -441,7 +428,9 @@ def test_add_article_tag():
     ]
 
     response = client.put(
-        "/api/v1/article/1/tag/2", headers={"Authorization": f"Bearer {jwt}"}
+        "/api/v1/article/1/tag",
+        headers={"Authorization": f"Bearer {jwt}"},
+        json={"name": "t2"},
     )
     assert response.status_code == 200
 
@@ -465,13 +454,6 @@ def test_remove_article_tag():
     jwt = login(client, "Owner", "12345678")
 
     response = client.post(
-        "/api/v1/tag",
-        headers={"Authorization": f"Bearer {jwt}"},
-        json={"name": "t1"},
-    )
-    assert response.status_code == 200
-
-    response = client.post(
         "/api/v1/article",
         headers={"Authorization": f"Bearer {jwt}"},
         json={"title": "a1"},
@@ -479,7 +461,9 @@ def test_remove_article_tag():
     assert response.status_code == 200
 
     response = client.put(
-        "/api/v1/article/1/tag/1", headers={"Authorization": f"Bearer {jwt}"}
+        "/api/v1/article/1/tag",
+        headers={"Authorization": f"Bearer {jwt}"},
+        json={"name": "t1"},
     )
     assert response.status_code == 200
 

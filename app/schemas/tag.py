@@ -13,3 +13,7 @@ class Tag(TagBase):
 
 class TagCreate(TagBase):
     pass
+
+
+class TagWithName(TagBase):
+    pass
