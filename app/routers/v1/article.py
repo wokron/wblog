@@ -1,5 +1,5 @@
 from datetime import datetime
-from fastapi import APIRouter, Depends, Path, HTTPException, Query, status, Body
+from fastapi import APIRouter, Depends, Path, HTTPException, Query, status, Body, Response
 
 from sqlalchemy.orm import Session
 from ... import crud, schemas, models
@@ -14,6 +14,7 @@ router = APIRouter(
 
 @router.get("/", response_model=list[schemas.ArticleSimplify])
 async def list_articles(
+    response: Response,
     title_like: str = Query(None, min_length=1, max_length=50),
     content_has: str = None,
     category_id: int = Query(None, gt=0),
@@ -31,7 +32,7 @@ async def list_articles(
     limit: int = Query(10, gt=0),
     db: Session = Depends(get_db),
 ):
-    articles = crud.list_articles(
+    articles, total = crud.list_articles(
         db,
         title_like,
         content_has,
@@ -47,6 +48,7 @@ async def list_articles(
         skip,
         limit,
     )
+    response.headers["X-Total-Count"] = str(total)
     return articles
 
 
@@ -223,13 +225,15 @@ async def remove_article_tag(
     "/{article_id}/comment", response_model=list[schemas.Comment], tags=["comment"]
 )
 async def list_article_comments(
+    response: Response,
     article_id: int = Path(gt=0),
     order_by: str = Query("-create_time", pattern="^-?(create_time|like|dislike)$"),
     skip: int = Query(0, ge=0),
     limit: int = Query(10, gt=0),
     db: Session = Depends(get_db),
 ):
-    comments = crud.list_comments(db, article_id, order_by, skip, limit)
+    comments, total = crud.list_comments(db, article_id, order_by, skip, limit)
+    response.headers["X-Total-Count"] = str(total)
     return comments
 
 

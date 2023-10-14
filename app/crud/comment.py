@@ -30,7 +30,7 @@ def list_comments(
             query = query.order_by(desc(order_by))
         else:
             query = query.order_by(order_by)
-    return query.offset(skip).limit(limit).all()
+    return query.offset(skip).limit(limit).all(), query.count()
 
 
 def create_comment(

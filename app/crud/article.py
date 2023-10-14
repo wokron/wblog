@@ -77,7 +77,7 @@ def list_articles(
         else:
             query = query.order_by(order_by)
 
-    return query.offset(skip).limit(limit).all()
+    return query.offset(skip).limit(limit).all(), query.count()
 
 
 def create_article(db: Session, writer_id: int, article: schemas.ArticleCreate):
