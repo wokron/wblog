@@ -9,7 +9,8 @@ database.Base.metadata.create_all(bind=database.engine)
 app = FastAPI()
 
 origins = [
-    "http://localhost:3000"
+    "http://localhost:3000",
+    "http://localhost:5173"
 ]
 
 app.add_middleware(
@@ -18,6 +19,7 @@ app.add_middleware(
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
+    expose_headers=["X-Total-Count"],
 )
 
 app.include_router(router)
