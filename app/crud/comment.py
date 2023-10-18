@@ -15,6 +15,7 @@ def get_comment(db: Session, comment_id: int):
 def list_comments(
     db: Session,
     article_id: int = None,
+    member_id: int = None,
     order_by: str = "-create_time",
     skip: int = 0,
     limit: int = 10,
@@ -22,6 +23,8 @@ def list_comments(
     params = []
     if article_id is not None:
         params.append(models.Comment.article_id == article_id)
+    if member_id is not None:
+        params.append(models.Comment.member_id == member_id)
 
     query = db.query(models.Comment).filter(*params)
     if order_by is not None:

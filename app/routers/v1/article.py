@@ -232,7 +232,7 @@ async def list_article_comments(
     limit: int = Query(10, gt=0),
     db: Session = Depends(get_db),
 ):
-    comments, total = crud.list_comments(db, article_id, order_by, skip, limit)
+    comments, total = crud.list_comments(db, article_id, None, order_by, skip, limit)
     response.headers["X-Total-Count"] = str(total)
     return comments
 

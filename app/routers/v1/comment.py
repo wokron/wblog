@@ -23,12 +23,13 @@ router = APIRouter(
 def list_comments(
     response: Response,
     article_id: int = Query(None, gt=0),
+    member_id: int = Query(None, gt=0),
     order_by: str = Query("-create_time", pattern="^-?(create_time|like|dislike)$"),
     skip: int = Query(0, ge=0),
     limit: int = Query(10, gt=0),
     db: Session = Depends(get_db),
 ):
-    comments, total = crud.list_comments(db, article_id, order_by, skip, limit)
+    comments, total = crud.list_comments(db, article_id, member_id, order_by, skip, limit)
     response.headers["X-Total-Count"] = str(total)
     return comments
 
